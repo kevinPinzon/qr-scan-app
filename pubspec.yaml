@@ -1,0 +1,9 @@
+name: qr_scan_app
+description: "Monorepo para la aplicación de escaneo de QR con autenticación biométrica."
+repository: "https://github.com/tu-usuario/qr_scan_app"
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dev_dependencies:
+  melos: ^3.0.0

@@ -1,0 +1,6 @@
+name: qr_scan_app
+packages:
+  - apps/**
+  - packages/**
+scripts:
+  bs: melos bootstrap
