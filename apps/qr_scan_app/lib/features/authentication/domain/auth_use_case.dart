@@ -5,7 +5,7 @@ class AuthUseCase {
 
   AuthUseCase(this._authRepository);
 
-  Future<bool> authenticateUser() {
+  Future<bool> isAuthenticated() {
     return _authRepository.authenticateUser();
   }
 

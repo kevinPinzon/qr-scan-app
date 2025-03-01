@@ -1,27 +1,41 @@
-import 'package:biometric_auth/biometric_auth.dart';
+import 'package:biometric_auth/auth_biometric.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
-  final BiometricAuthApi _biometricAuthApi = BiometricAuthApi();
+  final biometricAuth = BiometricRepositoryImpl();
+  static const String _authKey = 'is_authenticated';
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
-  // Función que retorna true o false dependiendo del resultado de la autenticación
   Future<bool> authenticateUser() async {
     try {
-      // Intentamos autenticar al usuario
-      final result = await _biometricAuthApi.authenticate();
-
-      // Retorna true si la autenticación fue exitosa, false en caso contrario
-      return result;
+      final isAuthenticated = await biometricAuth.getResult();
+      if (isAuthenticated) {
+        await _secureStorage.write(key: _authKey, value: 'true');
+      }
+      return isAuthenticated;
     } catch (e) {
-      // Si ocurre un error, se lanza una excepción
-      return false; // Retorna false si hay un error
+      return false;
     }
+  }
+
+  Future<bool> isAuthenticated() async {
+    final value = await _secureStorage.read(key: _authKey);
+    return value == 'true';
   }
 
   Future<void> logOut() async {
     try {
-      // Aquí puedes agregar el código de cierre de sesión si es necesario
+      await clearAuthentication();
     } catch (e) {
-      throw e;
+      throw Exception("Error during logout: $e");
+    }
+  }
+
+  Future<void> clearAuthentication() async {
+    try {
+      await _secureStorage.delete(key: _authKey);
+    } catch (e) {
+      throw Exception("Error clearing authentication data: $e");
     }
   }
 }

@@ -12,30 +12,27 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthBloc(), // Inyectamos el AuthBloc
-      child: BlocConsumer<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is SignInSuccessful) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("Successful login")),
-            );
-            context.go('/home');
-          } else if (state is AuthError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${state.message}')),
-            );
-          }
-        },
-        builder: (context, state) {
-          return Stack(
-            children: [
-              _buildBody(context),
-              if (state is Loading) const CustomLoadingWidget(),
-            ],
+    return BlocConsumer<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is Authenticated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Successful login")),
           );
-        },
-      ),
+          context.go('/scan');
+        } else if (state is AuthError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: ${state.message}')),
+          );
+        }
+      },
+      builder: (context, state) {
+        return Stack(
+          children: [
+            _buildBody(context),
+            if (state is AuthLoading) const CustomLoadingWidget(),
+          ],
+        );
+      },
     );
   }
 
@@ -51,7 +48,7 @@ class LoginScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(top: 20),
                 child: Text(
-                  'Welcome Back',
+                  'Welcome!',
                   style: TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.bold,
